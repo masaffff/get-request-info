@@ -1,14 +1,15 @@
-var http = require('http');
-var server = http.createServer();
-var urlParser = require('url');
-var requestInfo = function(request){
+const http = require('http');
+const urlParser = require('url');
+
+const requestInfo = function(request){
 	var url = urlParser.parse(request. url);
 	return {
 		'Method': request.method,
                 'Headers': request.headers,
 	};
 };
-var viewInfo = function(obj){
+
+const viewInfo = function(obj){
 	var keys = Object.keys(obj);
 	var src = '';
 	for(var k in keys){
@@ -24,12 +25,19 @@ var viewInfo = function(obj){
 	}
 	return src;
 }
-server.on('request', function(req, res){
-	res.writeHead(200, {'content-Type':'text/html; charset=UTF-8'});
-	var reqData = requestInfo(req);
-	var info = viewInfo(reqData);
-	res.write(info);
-	res.end();
+
+const server = http.createServer((request, response) => {
+  response.statusCode = 200;
+  response.setHeader('Content-Type', 'text/html; charset=UTF-8');
+
+  const reqData = requestInfo(request);
+  const info = viewInfo(reqData);
+
+  response.write(info);
+  response.end();
+
 });
 
-server.listen(8080, '127.0.0.1');
+server.listen(8080, () => {
+  console.log('Server running at http://localhost:8080');
+});
